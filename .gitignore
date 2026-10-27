@@ -1,0 +1,7 @@
+.sites-local/
+.openai/
+.artifacts/
+node_modules/
+*.tar.gz
+*.tar
+qa/

@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f6eddc" />
+    <meta
+      name="description"
+      content="ほしい子をタッチ、ボタンでぎゅっ。文字を読まなくても遊べる、やさしいぬいぐるみクレーン。"
+    />
+    <title>ぽかぽかクレーン</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./rules.js" defer></script>
+    <script src="./game.js" defer></script>
+  </head>
+  <body>
+    <main class="arcade" aria-label="ぽかぽかクレーン">
+      <header class="topbar">
+        <div class="wordmark">
+          <svg viewBox="0 0 40 40" aria-hidden="true">
+            <g stroke="#d79443" stroke-width="2.4" stroke-linecap="round">
+              <path
+                d="M20 3v4m0 26v4M3 20h4m26 0h4M8 8l3 3m18 18 3 3M8 32l3-3M29 11l3-3"
+              />
+            </g>
+            <circle cx="20" cy="20" r="10" fill="#f1bb55" />
+            <path
+              d="M16 22q4 5 8 0"
+              fill="none"
+              stroke="#8c5e38"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+            <circle cx="16" cy="18" r="1" fill="#8c5e38" />
+            <circle cx="24" cy="18" r="1" fill="#8c5e38" /></svg
+          ><span>ぽかぽか<em>クレーン</em></span>
+        </div>
+        <nav class="utilities" aria-label="音・一時停止・お手本">
+          <button
+            id="sound"
+            class="utility"
+            type="button"
+            aria-label="音を消す"
+            aria-pressed="true"
+          ></button>
+          <button
+            id="pause"
+            class="utility"
+            type="button"
+            aria-label="ひとやすみ"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 6v12M16 6v12" />
+            </svg>
+          </button>
+          <button
+            id="help"
+            class="utility"
+            type="button"
+            aria-label="遊び方のお手本を見る"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 8a4 4 0 0 1 8 0c0 3-4 3-4 6" />
+              <circle
+                cx="12"
+                cy="19"
+                r="1.3"
+                stroke="none"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
+        </nav>
+      </header>
+
+      <section id="game" class="play-area" aria-label="クレーン台">
+        <div class="machine">
+          <div class="marquee" aria-hidden="true">
+            <span class="marquee-star">✦</span>
+            <div class="marquee-face"><i></i><i></i><b></b></div>
+            <span class="marquee-star">✦</span>
+            <div class="lights"><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <div id="stage" class="stage">
+            <svg
+              id="scene"
+              viewBox="0 0 360 400"
+              aria-label="タッチして、つかまえたいぬいぐるみを選ぶ"
+            >
+              <defs>
+                <linearGradient id="glass" x2="0" y2="1">
+                  <stop stop-color="#dceee9" />
+                  <stop offset="1" stop-color="#f1f6df" />
+                </linearGradient>
+                <linearGradient id="metal" x2="1" y2="1">
+                  <stop stop-color="#fffdf5" />
+                  <stop offset=".5" stop-color="#e5e4d4" />
+                  <stop offset="1" stop-color="#fdfcf2" />
+                </linearGradient>
+                <pattern
+                  id="wallPattern"
+                  width="36"
+                  height="36"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <circle cx="18" cy="18" r="1.5" fill="#a4c5bb" opacity=".3" />
+                </pattern>
+                <filter
+                  id="toyShadow"
+                  x="-30%"
+                  y="-20%"
+                  width="160%"
+                  height="155%"
+                >
+                  <feDropShadow
+                    dx="0"
+                    dy="5"
+                    stdDeviation="2.2"
+                    flood-color="#6c8570"
+                    flood-opacity=".13"
+                  />
+                </filter>
+              </defs>
+              <g id="scenery" aria-hidden="true"></g>
+              <g id="prizes"></g>
+              <g id="target" aria-hidden="true"></g>
+              <g id="crane" aria-hidden="true">
+                <path
+                  id="cable"
+                  stroke="#829b92"
+                  stroke-width="3"
+                  fill="none"
+                />
+                <g id="trolley">
+                  <rect
+                    x="-24"
+                    y="20"
+                    width="48"
+                    height="20"
+                    rx="8"
+                    fill="#6e9f95"
+                  />
+                  <rect
+                    x="-16"
+                    y="23"
+                    width="32"
+                    height="8"
+                    rx="4"
+                    fill="#a9cec0"
+                  />
+                  <circle cx="-14" cy="38" r="4" fill="#527c73" />
+                  <circle cx="14" cy="38" r="4" fill="#527c73" />
+                </g>
+                <g id="claw">
+                  <g id="held"></g>
+                  <path
+                    id="backFinger"
+                    d="M0 8v24l-6 12"
+                    stroke="#9db4a7"
+                    stroke-width="6"
+                    stroke-linecap="round"
+                    fill="none"
+                  />
+                  <path
+                    id="leftFinger"
+                    stroke="#6f8a7e"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    fill="none"
+                  />
+                  <path
+                    id="rightFinger"
+                    stroke="#6f8a7e"
+                    stroke-width="10"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    fill="none"
+                  />
+                  <path
+                    id="leftShine"
+                    stroke="#faf9e7"
+                    stroke-width="5.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    fill="none"
+                  />
+                  <path
+                    id="rightShine"
+                    stroke="#faf9e7"
+                    stroke-width="5.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    fill="none"
+                  />
+                  <rect
+                    x="-21"
+                    y="-10"
+                    width="42"
+                    height="27"
+                    rx="12"
+                    fill="#d87559"
+                  />
+                  <rect
+                    x="-17"
+                    y="-10"
+                    width="34"
+                    height="21"
+                    rx="9"
+                    fill="#f5a180"
+                  />
+                  <path
+                    d="M-9-4H5"
+                    stroke="#ffe3bd"
+                    stroke-width="4"
+                    stroke-linecap="round"
+                  />
+                  <circle
+                    cy="14"
+                    r="7"
+                    fill="#f6c66f"
+                    stroke="#d79a4a"
+                    stroke-width="2"
+                  />
+                </g>
+              </g>
+              <g id="falling" aria-hidden="true"></g>
+              <g id="frontGlass" aria-hidden="true"></g>
+            </svg>
+            <div id="hint" class="hint" aria-hidden="true">
+              <svg viewBox="0 0 56 64">
+                <path
+                  d="M20 33V12a5 5 0 0 1 10 0v17-7a5 5 0 0 1 9 0v8-4a5 5 0 0 1 8 1v13c0 11-7 18-16 18-7 0-12-4-16-10L7 37a5 5 0 0 1 7-7l6 7"
+                  fill="#fffdf3"
+                  stroke="#9b7351"
+                  stroke-width="2.5"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M14 9l-4-4M35 7l4-5M8 18H2"
+                  stroke="#df9c37"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <div class="machine-base">
+            <div class="base-decoration" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <button
+              id="outlet"
+              class="outlet"
+              type="button"
+              aria-label="取り出し口"
+              disabled
+            >
+              <span class="outlet-label" aria-hidden="true"
+                ><svg viewBox="0 0 24 14">
+                  <path
+                    d="M7 2v5h-4l9 6 9-6h-4V2"
+                    fill="currentColor"
+                  /></svg></span
+              ><span id="delivered" class="delivered"></span
+              ><span class="pocket-edge"></span
+              ><span class="prize-rays" aria-hidden="true">✦</span>
+            </button>
+            <div class="base-stamp" aria-hidden="true">
+              <svg viewBox="0 0 50 50">
+                <path
+                  d="M25 5l5 11 12 2-9 9 2 13-10-6-11 6 2-13-9-9 13-2z"
+                  fill="#eeb75c"
+                />
+                <circle cx="21" cy="24" r="1.5" fill="#ad793d" />
+                <circle cx="29" cy="24" r="1.5" fill="#ad793d" />
+                <path
+                  d="M22 28q3 3 6 0"
+                  stroke="#ad793d"
+                  stroke-width="1.6"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+          <span class="machine-foot foot-left" aria-hidden="true"></span
+          ><span class="machine-foot foot-right" aria-hidden="true"></span>
+        </div>
+
+        <div class="controls" aria-label="クレーンを動かす">
+          <button
+            id="left"
+            class="direction"
+            type="button"
+            aria-label="クレーンを左に動かす"
+          >
+            <svg viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M23 9 12 20l11 11M13 20h16" />
+            </svg>
+          </button>
+          <button
+            id="catch"
+            class="catch"
+            type="button"
+            aria-label="クレーンを下ろしてつかむ"
+          >
+            <span class="catch-top"
+              ><svg viewBox="0 0 72 60" aria-hidden="true">
+                <path
+                  d="M36 3v12m-16 5-9 14 10 10m31-24 9 14-10 10"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <rect
+                  x="23"
+                  y="13"
+                  width="26"
+                  height="15"
+                  rx="6"
+                  fill="currentColor"
+                />
+                <path
+                  d="M36 37v17m-8-7 8 8 8-8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></span>
+          </button>
+          <button
+            id="right"
+            class="direction"
+            type="button"
+            aria-label="クレーンを右に動かす"
+          >
+            <svg viewBox="0 0 40 40" aria-hidden="true">
+              <path d="m17 9 11 11-11 11M27 20H11" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="shelf-wrap">
+          <div id="shelf" class="shelf" aria-label="受け取ったぬいぐるみ"></div>
+          <div class="shelf-board" aria-hidden="true"></div>
+        </div>
+      </section>
+      <p
+        id="announcement"
+        class="sr-only"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      ></p>
+    </main>
+
+    <dialog id="pauseDialog" class="pause-dialog" aria-label="ひとやすみ">
+      <svg class="sleepy-sun" viewBox="0 0 100 100" aria-hidden="true">
+        <g stroke="#e3b364" stroke-width="5" stroke-linecap="round">
+          <path
+            d="M50 6v9m0 70v9M6 50h9m70 0h9M19 19l6 6m50 50 6 6M19 81l6-6m50-50 6-6"
+          />
+        </g>
+        <circle cx="50" cy="50" r="28" fill="#f3c66f" />
+        <path
+          d="M36 48q5 6 10 0m8 0q5 6 10 0M45 62q5 3 10 0"
+          fill="none"
+          stroke="#9d734a"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+      </svg>
+      <button id="resume" type="button" aria-label="つづけて遊ぶ">
+        <svg viewBox="0 0 60 60" aria-hidden="true">
+          <path
+            d="m23 14 23 16-23 16z"
+            fill="currentColor"
+            stroke="currentColor"
+            stroke-linejoin="round"
+            stroke-width="5"
+          />
+        </svg>
+      </button>
+    </dialog>
+    <noscript
+      >このゲームを遊ぶには、ブラウザーのJavaScriptを有効にしてください。</noscript
+    >
+  </body>
+</html>
